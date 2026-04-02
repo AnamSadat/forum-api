@@ -20,6 +20,7 @@ class JwtTokenManager extends AuthenticationTokenManager {
     try {
       this._jwt.verify(token, config.auth.refreshTokenKey);
     } catch (error) {
+      console.log('🚀 ~ JwtTokenManager ~ verifyRefreshToken ~ error:', error);
       throw new InvariantError('refresh token tidak valid');
     }
   }
