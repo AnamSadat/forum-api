@@ -3,12 +3,14 @@ import ClientError from '../../Commons/exceptions/ClientError.js';
 import DomainErrorTranslator from '../../Commons/exceptions/DomainErrorTranslator.js';
 import users from '../../Interfaces/http/api/users/index.js';
 import authentications from '../../Interfaces/http/api/authentications/index.js';
+import logger from 'morgan';
 
 const createServer = async (container) => {
   const app = express();
 
   // Middleware for parsing JSON
   app.use(express.json());
+  app.use(logger('dev'));
 
   // Register routes
   app.use('/users', users(container));
@@ -16,6 +18,7 @@ const createServer = async (container) => {
 
   // Global error handler
   app.use((error, req, res, next) => {
+    console.log(next);
     // bila response tersebut error, tangani sesuai kebutuhan
     const translatedError = DomainErrorTranslator.translate(error);
 
