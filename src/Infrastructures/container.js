@@ -14,6 +14,13 @@ import PasswordHash from '../Applications/security/PasswordHash.js';
 import UserRepositoryPostgres from './repository/UserRepositoryPostgres.js';
 import BcryptPasswordHash from './security/BcryptPasswordHash.js';
 
+import ThreadRepository from '../Domains/threads/ThreadRepository.js';
+import ThreadRepositoryPostgres from './repository/ThreadRepositoryPostgres.js';
+import CommentRepository from '../Domains/comments/CommentRepository.js';
+import commentRepositoryPostgres from './repository/CommentRepositoryPostgres.js';
+import ReplyRepository from '../Domains/replies/ReplyRepository.js';
+import ReplyRepositoryPostgres from './repository/ReplyRepositoryPostgres.js';
+
 // use case
 import AddUserUseCase from '../Applications/use_case/AddUserUseCase.js';
 import AuthenticationTokenManager from '../Applications/security/AuthenticationTokenManager.js';
@@ -71,8 +78,50 @@ container.register([
     parameter: {
       dependencies: [
         {
-          concrete: jwt
-        }
+          concrete: jwt,
+        },
+      ],
+    },
+  },
+  {
+    key: ThreadRepository.name,
+    Class: ThreadRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
+      ],
+    },
+  },
+  {
+    key: CommentRepository.name,
+    Class: commentRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
+      ],
+    },
+  },
+  {
+    key: ReplyRepository.name,
+    Class: ReplyRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
       ],
     },
   },
