@@ -19,4 +19,10 @@ export default defineConfig([
       globals: { ...vitest.environments.env.globals, ...globals.node },
     },
   },
+  {
+    files: ['migrations/**/*.js'],
+    rules: {
+      camelcase: 'off',
+    },
+  },
 ]);
