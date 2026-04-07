@@ -5,16 +5,14 @@ export default class CommentDetails {
     const { id, content, date, username, replies } =
       this._formatPayload(payload);
 
-    this._id = id;
-    this._content = content;
-    this._date = date;
-    this._username = username;
-    this._replies = replies;
+    this.id = id;
+    this.content = content;
+    this.date = date;
+    this.username = username;
+    this.replies = replies;
   }
 
   _verifyPayload(payload) {
-    if (!payload) throw new Error('COMMENT_DETAILS.PAYLOAD_REQUIRED');
-
     const {
       id,
       content,
@@ -49,8 +47,6 @@ export default class CommentDetails {
   }
 
   _formatPayload(payload) {
-    if (!payload) throw new Error('COMMENT_DETAILS.REQUIRED_PAYLOAD');
-
     const {
       id,
       content,
@@ -62,7 +58,7 @@ export default class CommentDetails {
 
     return {
       id,
-      content: isDeleted ? '**balasan telah dihapus**' : content,
+      content: isDeleted ? '**komentar telah dihapus**' : content,
       date,
       replies,
       username,

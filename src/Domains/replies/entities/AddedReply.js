@@ -4,14 +4,12 @@ export default class AddedReply {
 
     const { id, content, owner } = payload;
 
-    this._id = id;
-    this._content = content;
-    this._owner = owner;
+    this.id = id;
+    this.content = content;
+    this.owner = owner;
   }
 
   _verifyPayload(payload) {
-    if (!payload) throw new Error('ADDED_REPLY.REQUIRED_PAYLOAD');
-
     const { id, content, owner } = payload;
 
     if (!id || !content || !owner)
@@ -22,6 +20,6 @@ export default class AddedReply {
       typeof content !== 'string' ||
       typeof owner !== 'string'
     )
-      throw new Error('ADDED_REPLY.NOT_META_DATA_TYPE_SPECIFICATION');
+      throw new Error('ADDED_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION');
   }
 }

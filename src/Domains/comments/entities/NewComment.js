@@ -4,14 +4,12 @@ export default class NewComment {
 
     const { threadId, content, owner } = payload;
 
-    this._threadId = threadId;
-    this._content = content;
-    this._owner = owner;
+    this.threadId = threadId;
+    this.content = content;
+    this.owner = owner;
   }
 
   _verifyPayload(payload) {
-    if (!payload) throw new Error('NEW_COMMENT.PAYLOAD_REQUIRED');
-
     const { threadId, content, owner } = payload;
 
     if (!threadId || !content || !owner)

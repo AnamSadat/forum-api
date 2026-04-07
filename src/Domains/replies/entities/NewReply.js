@@ -4,14 +4,12 @@ export default class NewReply {
 
     const { commentId, content, owner } = payload;
 
-    this._commentId = commentId;
-    this._content = content;
-    this._owner = owner;
+    this.commentId = commentId;
+    this.content = content;
+    this.owner = owner;
   }
 
   _verifyPayload(payload) {
-    if (!payload) throw new Error('NEW_REPLY.PAYLOAD_REQUIRED');
-
     const { commentId, content, owner } = payload;
 
     if (!commentId || !content || !owner)

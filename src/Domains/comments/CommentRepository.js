@@ -15,7 +15,11 @@ export default class CommentRepository {
     throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async verifyCommentOwner(commentId) {
+  async verifyCommentOwner({ commentId, userId }) {
+    console.log(
+      '🚀 ~ CommentRepository ~ verifyCommentOwner ~ userId:',
+      userId,
+    );
     console.log(
       '🚀 ~ CommentRepository ~ verifyCommentOwner ~ commentId:',
       commentId,

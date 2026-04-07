@@ -4,15 +4,13 @@ export default class ReplyDetails {
 
     const { id, content, date, username } = this._formatPayload(payload);
 
-    this._id = id;
-    this._content = content;
-    this._date = date;
-    this._username = username;
+    this.id = id;
+    this.content = content;
+    this.date = date;
+    this.username = username;
   }
 
   _verifyPayload(payload) {
-    if (!payload) throw new Error('REPLY_DETAILS.PAYLOAD_REQUIRED');
-
     const { id, content, date, username, is_deleted: isDeleted } = payload;
 
     if (!id || !content || !date || !username || isDeleted === undefined)
@@ -29,8 +27,6 @@ export default class ReplyDetails {
   }
 
   _formatPayload(payload) {
-    if (!payload) throw new Error('REPLY_DETAILS.REQUIRED_PAYLOAD');
-
     const { id, content, date, username, is_deleted: isDeleted } = payload;
 
     return {

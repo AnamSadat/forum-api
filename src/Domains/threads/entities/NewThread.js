@@ -4,14 +4,12 @@ export default class NewThread {
 
     const { title, body, owner } = payload;
 
-    this._title = title;
-    this._body = body;
-    this._owner = owner;
+    this.title = title;
+    this.body = body;
+    this.owner = owner;
   }
 
   _verifyPayload(payload) {
-    if (!payload) throw new Error('NEW_THREAD.PAYLOAD_REQUIRED');
-
     const { title, body, owner } = payload;
 
     if (!title || !body || !owner)
