@@ -1,8 +1,8 @@
-import CommentDetails from '../../Domains/comments/entities/CommentDetails';
-import ReplyDetails from '../../Domains/replies/entities/ReplyDetails';
-import ThreadDetails from '../../Domains/threads/entities/ThreadDetails';
+import CommentDetails from '../../Domains/comments/entities/CommentDetails.js';
+import ReplyDetails from '../../Domains/replies/entities/ReplyDetails.js';
+import ThreadDetails from '../../Domains/threads/entities/ThreadDetails.js';
 
-export default class getThreadUseCase {
+export default class GetThreadUseCase {
   constructor({ threadRepository, commentRepository, replyRepository }) {
     this._threadRepository = threadRepository;
     this._commentRepository = commentRepository;
@@ -15,11 +15,11 @@ export default class getThreadUseCase {
     const thread = await this._threadRepository.getThreadById(useCasePayload);
 
     const comments =
-      await this._commentRepository.getCommentsByThreadId(useCasePayload);
+      await this._commentRepository.getCommentByThreadId(useCasePayload);
 
     const commentsWithReplies = await Promise.all(
       comments.map(async (comment) => {
-        const replies = await this._replyRepository.getRepliesByCommentId(
+        const replies = await this._replyRepository.getReplyByCommentId(
           comment.id,
         );
         const formattedRepiles = replies.map(
