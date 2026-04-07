@@ -1,5 +1,5 @@
-import ThreadRepository from '../../Domains/threads/ThreadRepository';
-import NotFoundError from '../../Commons/exceptions/NotFoundError';
+import ThreadRepository from '../../Domains/threads/ThreadRepository.js';
+import NotFoundError from '../../Commons/exceptions/NotFoundError.js';
 
 export default class ThreadRepositoryPostgres extends ThreadRepository {
   constructor(pool, idGenerator) {
@@ -10,7 +10,7 @@ export default class ThreadRepositoryPostgres extends ThreadRepository {
 
   async addThread(newThread) {
     const { title, body, owner } = newThread;
-    const id = `thread-${this._idGenerator}`;
+    const id = `thread-${this._idGenerator()}`;
 
     const query = {
       text: 'INSERT INTO threads (id, title, body, owner) VALUES ($1, $2, $3, $4) RETURNING id, title, owner',
@@ -28,7 +28,7 @@ export default class ThreadRepositoryPostgres extends ThreadRepository {
       values: [threadId],
     };
 
-    const result = this._pool.query(query);
+    const result = await this._pool.query(query);
 
     if (!result.rowCount) {
       throw new NotFoundError('Thread tidak ditemukan');

@@ -4,6 +4,10 @@ import DomainErrorTranslator from '../../Commons/exceptions/DomainErrorTranslato
 import users from '../../Interfaces/http/api/users/index.js';
 import authentications from '../../Interfaces/http/api/authentications/index.js';
 import logger from 'morgan';
+import threads from '../../Interfaces/http/api/threads/index.js';
+import authenticateToken from './middleware/authenticateToken.js';
+import comments from '../../Interfaces/http/api/comments/index.js';
+import replies from '../../Interfaces/http/api/replies/index.js';
 
 const createServer = async (container) => {
   const app = express();
@@ -15,20 +19,52 @@ const createServer = async (container) => {
   // Register routes
   app.use('/users', users(container));
   app.use('/authentications', authentications(container));
+  app.use('/threads', threads(container));
+  app.use(
+    '/threads/:threadId/comments',
+    authenticateToken,
+    comments(container),
+  );
+  app.use(
+    '/threads/:threadId/comments/:commentId',
+    authenticateToken,
+    comments(container),
+  );
+  app.use(
+    '/threads/:threadId/comments/:commentId/replies',
+    authenticateToken,
+    replies(container),
+  );
+  app.use(
+    '/threads/:threadId/comments/:commentId/replies/:replyId',
+    authenticateToken,
+    replies(container),
+  );
 
   // Global error handler
+  // eslint-disable-next-line no-unused-vars
   app.use((error, req, res, next) => {
-    console.log(next);
+    // console.log(next.app);
+
     // bila response tersebut error, tangani sesuai kebutuhan
     const translatedError = DomainErrorTranslator.translate(error);
 
     // penanganan client error secara internal.
     if (translatedError instanceof ClientError) {
+      logError(translatedError, error);
+
       return res.status(translatedError.statusCode).json({
         status: 'fail',
         message: translatedError.message,
       });
     }
+
+    // Log server error untuk debugging
+    console.error('🚀 ~ Server Error:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+    });
 
     // penanganan server error sesuai kebutuhan
     return res.status(500).json({
@@ -46,6 +82,49 @@ const createServer = async (container) => {
   });
 
   return app;
+};
+
+const logError = (translatedError, error) => {
+  const statusCode = translatedError.statusCode || 500;
+  const errorType = error.name || 'UnknownError';
+
+  if (statusCode === 401) {
+    // AuthenticationError
+    console.error(`🚀 ~ [401] ${translatedError.message}`, {
+      name: errorType,
+      statusCode,
+      message: error.message,
+    });
+  } else if (statusCode === 403) {
+    // AuthorizationError
+    console.error(`🚀 ~ [403] ${translatedError.message}`, {
+      name: errorType,
+      statusCode,
+      message: error.message,
+    });
+  } else if (statusCode === 404) {
+    // NotFoundError
+    console.error(`🚀 ~ [404] ${translatedError.message}`, {
+      name: errorType,
+      statusCode,
+      message: error.message,
+    });
+  } else if (statusCode === 400) {
+    // ClientError, InvariantError
+    console.error(`🚀 ~ [400] ${translatedError.message}`, {
+      name: errorType,
+      statusCode,
+      message: error.message,
+    });
+  } else {
+    // Server error (500+)
+    console.error(`🚀 ~ [${statusCode}] Server Error`, {
+      name: errorType,
+      statusCode,
+      message: error.message,
+      stack: error.stack,
+    });
+  }
 };
 
 export default createServer;
