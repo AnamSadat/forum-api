@@ -20,7 +20,11 @@ export default defineConfig([
     },
   },
   {
-    files: ['migrations/**/*.js'],
+    files: [
+      'migrations/**/*.js',
+      'src/Applications/use_case/_test/GetThreadUseCase.test.js',
+      '**/_test/*.test.js',
+    ],
     rules: {
       camelcase: 'off',
     },
