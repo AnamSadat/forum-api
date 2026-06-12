@@ -18,7 +18,7 @@ export default class ThreadDetails {
     const { id, title, body, date, username, comments } = payload;
 
     if (!id || !title || !body || !date || !username || !comments)
-      throw new InvariantError('THREAD_DETAILS.NOT_CONTAIN_NEEDED_PROPERTY');
+      throw new Error('THREAD_DETAILS.NOT_CONTAIN_NEEDED_PROPERTY');
 
     if (
       typeof id !== 'string' ||
@@ -33,8 +33,6 @@ export default class ThreadDetails {
         )
       )
     )
-      throw new InvariantError(
-        'THREAD_DETAILS.NOT_MEET_DATA_TYPE_SPECIFICATION',
-      );
+      throw new Error('THREAD_DETAILS.NOT_MEET_DATA_TYPE_SPECIFICATION');
   }
 }
