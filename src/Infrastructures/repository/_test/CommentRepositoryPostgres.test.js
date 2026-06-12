@@ -44,24 +44,30 @@ describe('CommentRepositoryPostgres', () => {
     it('should persist new comment and return added comment correctly', async () => {
       // Arrange
       const randomNum = Math.floor(Math.random() * 100000);
+      console.log('🚀 ~ randomNum:', randomNum);
       const commentId = `comment-${randomNum}`;
+      console.log('🚀 ~ commentId:', commentId);
       const newComment = new NewComment({
         threadId,
         content: 'isi komen',
         owner: userId,
       });
+      console.log('🚀 ~ newComment:', newComment);
 
       const fakeIdGenerator = () => randomNum.toString(); // stub!
+      console.log('🚀 ~ fakeIdGenerator:', fakeIdGenerator());
       const commentRepositoryPostgres = new CommentRepositoryPostgres(
         pool,
         fakeIdGenerator,
       );
+      console.log('🚀 ~ commentRepositoryPostgres:', commentRepositoryPostgres);
 
       // Action
       await commentRepositoryPostgres.addComment(newComment);
 
       // Assert
       const comments = await CommentsTableTestHelper.findCommentById(commentId);
+      console.log('🚀 ~ comments:', comments);
       expect(comments).toHaveLength(1);
     });
 

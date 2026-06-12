@@ -17,7 +17,7 @@ describe('ReplyRepositoryPostgres', () => {
   beforeEach(async () => {
     const randomNum = Math.floor(Math.random() * 100000);
     userId = `user-${randomNum}`;
-    username = `dicoding${randomNum}`;
+    username = 'dicoding-123';
     threadId = `thread-${randomNum}`;
     commentId = `comment-${randomNum}`;
 
@@ -128,7 +128,7 @@ describe('ReplyRepositoryPostgres', () => {
       const replyId = `reply-${randomNum}`;
       await RepliesTableTestHelper.addReply({
         id: replyId,
-        comment_id: commentId,
+        commentId,
         content: 'isi reply',
         owner: userId,
       });
@@ -173,7 +173,7 @@ describe('ReplyRepositoryPostgres', () => {
       const replyId = `reply-${randomNum}`;
       await RepliesTableTestHelper.addReply({
         id: replyId,
-        comment_id: commentId,
+        commentId,
         content: 'isi reply',
         owner: userId,
       });
@@ -201,7 +201,7 @@ describe('ReplyRepositoryPostgres', () => {
       const replyId = `reply-${randomNum}`;
       await RepliesTableTestHelper.addReply({
         id: replyId,
-        comment_id: commentId,
+        commentId,
         content: 'isi reply',
         owner: userId,
       });
@@ -229,7 +229,7 @@ describe('ReplyRepositoryPostgres', () => {
       const replyDate1 = new Date();
       await RepliesTableTestHelper.addReply({
         id: replyId1,
-        comment_id: commentId,
+        commentId,
         content: 'isi reply 1',
         owner: userId,
         date: replyDate1,
@@ -243,7 +243,7 @@ describe('ReplyRepositoryPostgres', () => {
       const replyDate2 = new Date();
       await RepliesTableTestHelper.addReply({
         id: replyId2,
-        comment_id: commentId,
+        commentId,
         content: 'isi reply 2',
         owner: userId,
         date: replyDate2,
@@ -259,7 +259,7 @@ describe('ReplyRepositoryPostgres', () => {
 
       // Action
       const replies =
-        await replyRepositoryPostgres.getRepliesByCommentId(commentId);
+        await replyRepositoryPostgres.getReplyByCommentId(commentId);
 
       // Assert
       expect(replies).toHaveLength(2);

@@ -139,7 +139,7 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
       const replyId = 'reply-123456';
       await RepliesTableTestHelper.addReply({
         id: replyId,
-        comment_id: commentId,
+        commentId,
         content: 'isi reply',
         owner: userId,
       });
@@ -185,7 +185,7 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
       const replyId = 'reply-123456';
       await RepliesTableTestHelper.addReply({
         id: replyId,
-        comment_id: commentId,
+        commentId,
         content: 'isi reply',
         owner: differentUserId,
       });
