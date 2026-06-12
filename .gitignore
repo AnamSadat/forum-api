@@ -5,3 +5,6 @@ config/database/test.json
 coverage
 .env
 docs/
+note.txt
+naskah_wawancara.txt
+forum-api.zip
