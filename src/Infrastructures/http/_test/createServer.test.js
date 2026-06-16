@@ -388,4 +388,154 @@ describe('HTTP server', () => {
     expect(response.body.status).toEqual('error');
     expect(response.body.message).toEqual('terjadi kegagalan pada server kami');
   });
+
+  it('should handle error with statusCode 500 and log correctly', async () => {
+    // Arrange
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    // Import ClientError to create a custom subclass
+    const { default: ClientError } =
+      await import('../../../Commons/exceptions/ClientError.js');
+
+    // Create a custom ClientError with statusCode 500 to reach logError else branch
+    class CustomClientError extends ClientError {
+      constructor(message) {
+        super(message, 500);
+        this.name = 'CustomClientError';
+      }
+    }
+
+    const mockContainer = {
+      getInstance: () => {
+        throw new CustomClientError('Internal Server Error');
+      },
+    };
+
+    const app = await createServer(mockContainer);
+
+    // Action
+    const response = await request(app).post('/users').send({
+      username: 'test',
+      password: 'test',
+      fullname: 'Test User',
+    });
+
+    // Assert
+    expect(response.status).toEqual(500);
+    expect(response.body.status).toEqual('fail');
+    expect(response.body.message).toEqual('Internal Server Error');
+    // Verify logError was called with the custom error
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringMatching(/\[500\] Server Error/),
+      expect.any(Object),
+    );
+
+    consoleSpy.mockRestore();
+  });
+
+  it('should handle non-ClientError and log server error', async () => {
+    // Arrange
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const mockContainer = {
+      getInstance: () => {
+        throw new Error('Generic Error');
+      },
+    };
+
+    const app = await createServer(mockContainer);
+
+    // Action
+    const response = await request(app).post('/users').send({
+      username: 'test',
+      password: 'test',
+      fullname: 'Test User',
+    });
+
+    // Assert
+    expect(response.status).toEqual(500);
+    expect(response.body.status).toEqual('error');
+    expect(response.body.message).toEqual('terjadi kegagalan pada server kami');
+    // Verify console.error was called for server error
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Server Error'),
+      expect.any(Object),
+    );
+
+    consoleSpy.mockRestore();
+  });
+
+  it('should handle NotFoundError correctly', async () => {
+    // Arrange
+    const consoleSpy = vi.spyOn(console, 'error');
+    const { default: NotFoundError } =
+      await import('../../../Commons/exceptions/NotFoundError.js');
+
+    const mockContainer = {
+      getInstance: () => {
+        throw new NotFoundError('Thread tidak ditemukan');
+      },
+    };
+
+    const app = await createServer(mockContainer);
+
+    // Action
+    const response = await request(app).post('/users').send({
+      username: 'test',
+      password: 'test',
+      fullname: 'Test User',
+    });
+
+    // Assert - verify 404 response is correctly returned
+    expect(response.status).toEqual(404);
+    expect(response.body.status).toEqual('fail');
+    expect(response.body.message).toEqual('Thread tidak ditemukan');
+
+    // Verify logError was called (which covers the 404 branch)
+    const errorLogs = consoleSpy.mock.calls.filter((call) =>
+      call[0]?.includes?.('[404]'),
+    );
+    expect(errorLogs.length).toBeGreaterThan(0);
+
+    consoleSpy.mockRestore();
+  });
+
+  it('should handle AuthorizationError correctly', async () => {
+    // Arrange
+    const consoleSpy = vi.spyOn(console, 'error');
+    const { default: AuthorizationError } =
+      await import('../../../Commons/exceptions/AuthorizationError.js');
+
+    const mockContainer = {
+      getInstance: () => {
+        throw new AuthorizationError(
+          'Anda tidak berhak mengakses resource ini',
+        );
+      },
+    };
+
+    const app = await createServer(mockContainer);
+
+    // Action
+    const response = await request(app).post('/users').send({
+      username: 'test',
+      password: 'test',
+      fullname: 'Test User',
+    });
+
+    // Assert - verify 403 response is correctly returned
+    expect(response.status).toEqual(403);
+    expect(response.body.status).toEqual('fail');
+    expect(response.body.message).toEqual(
+      'Anda tidak berhak mengakses resource ini',
+    );
+
+    // Verify logError was called (which covers the 403 branch)
+    const errorLogs = consoleSpy.mock.calls.filter((call) =>
+      call[0]?.includes?.('[403]'),
+    );
+    expect(errorLogs.length).toBeGreaterThan(0);
+
+    consoleSpy.mockRestore();
+  });
 });
