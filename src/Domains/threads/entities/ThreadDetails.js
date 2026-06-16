@@ -1,5 +1,3 @@
-import InvariantError from '../../../Commons/exceptions/InvariantError.js';
-
 export default class ThreadDetails {
   constructor(payload) {
     this._verifyPayload(payload);
