@@ -11,6 +11,7 @@ describe('config.js', () => {
   it('should load config with NODE_ENV test', async () => {
     // Arrange
     process.env.NODE_ENV = 'test';
+    vi.resetModules();
 
     // Action
     const config = (await import('../config.js')).default;
@@ -25,9 +26,10 @@ describe('config.js', () => {
   it('should load from .env file when NODE_ENV is development', async () => {
     // Arrange
     process.env.NODE_ENV = 'development';
+    vi.resetModules();
 
     // Action
-    const config = (await import(`../config.js?t=${Date.now()}`)).default;
+    const config = (await import('../config.js')).default;
 
     // Assert
     expect(config).toBeDefined();
@@ -38,9 +40,10 @@ describe('config.js', () => {
   it('should load from .env file when NODE_ENV is production', async () => {
     // Arrange
     process.env.NODE_ENV = 'production';
+    vi.resetModules();
 
     // Action
-    const config = (await import(`../config.js?t=${Date.now()}`)).default;
+    const config = (await import('../config.js')).default;
 
     // Assert
     expect(config).toBeDefined();

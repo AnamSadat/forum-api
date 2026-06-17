@@ -2,6 +2,7 @@ import { vi } from 'vitest';
 import CommentRepository from '../../../Domains/comments/CommentRepository';
 import ReplyRepository from '../../../Domains/replies/ReplyRepository';
 import ThreadRepository from '../../../Domains/threads/ThreadRepository';
+import LikeRepository from '../../../Domains/likes/LikeRepository.js';
 import ThreadDetails from '../../../Domains/threads/entities/ThreadDetails';
 import CommentDetails from '../../../Domains/comments/entities/CommentDetails';
 import ReplyDetails from '../../../Domains/replies/entities/ReplyDetails';
@@ -19,6 +20,7 @@ describe('GetThreadUseCase', () => {
     const mockThreadRepository = new ThreadRepository();
     const mockCommentRepository = new CommentRepository();
     const mockReplyRepository = new ReplyRepository();
+    const mockLikeRepository = new LikeRepository();
 
     /** mocking needed function */
     mockThreadRepository.verifyThreadExist = vi.fn(() => Promise.resolve());
@@ -74,11 +76,14 @@ describe('GetThreadUseCase', () => {
       return Promise.resolve([]);
     });
 
+    mockLikeRepository.getLikesByThreadId = vi.fn(() => Promise.resolve([]));
+
     /** creating use case instance */
     const getThreadUseCase = new GetThreadUseCase({
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
       replyRepository: mockReplyRepository,
+      likeRepository: mockLikeRepository,
     });
 
     // Action
@@ -97,6 +102,9 @@ describe('GetThreadUseCase', () => {
     );
     expect(mockReplyRepository.getReplyByCommentId).toBeCalledWith(
       'comment-234',
+    );
+    expect(mockLikeRepository.getLikesByThreadId).toBeCalledWith(
+      useCasePayload,
     );
 
     expect(thread).toEqual(
@@ -129,6 +137,7 @@ describe('GetThreadUseCase', () => {
                 is_deleted: false,
               }),
             ],
+            likeCount: 0,
           }),
           new CommentDetails({
             id: 'comment-234',
@@ -137,9 +146,67 @@ describe('GetThreadUseCase', () => {
             content: 'some racist comment',
             is_deleted: true,
             replies: [],
+            likeCount: 0,
           }),
         ],
       }),
     );
+  });
+
+  it('should include like count for comments when likes exist', async () => {
+    // Arrange
+    const useCasePayload = 'thread-123';
+
+    const mockThreadRepository = new ThreadRepository();
+    const mockCommentRepository = new CommentRepository();
+    const mockReplyRepository = new ReplyRepository();
+    const mockLikeRepository = new LikeRepository();
+
+    mockThreadRepository.verifyThreadExist = vi.fn(() => Promise.resolve());
+    mockThreadRepository.getThreadById = vi.fn(() =>
+      Promise.resolve({
+        id: 'thread-123',
+        title: 'sebuah thread',
+        body: 'sebuah body thread',
+        date: new Date('2021-08-08T07:59:16.198Z'),
+        username: 'dicoding',
+      }),
+    );
+
+    mockCommentRepository.getCommentByThreadId = vi.fn(() =>
+      Promise.resolve([
+        {
+          id: 'comment-123',
+          username: 'johndoe',
+          date: new Date('2021-08-08T07:22:33.555Z'),
+          content: 'sebuah comment',
+          is_deleted: false,
+        },
+      ]),
+    );
+
+    mockReplyRepository.getReplyByCommentId = vi.fn(() => Promise.resolve([]));
+
+    mockLikeRepository.getLikesByThreadId = vi.fn(() =>
+      Promise.resolve([
+        {
+          comment_id: 'comment-123',
+          like_count: 5,
+        },
+      ]),
+    );
+
+    const getThreadUseCase = new GetThreadUseCase({
+      threadRepository: mockThreadRepository,
+      commentRepository: mockCommentRepository,
+      replyRepository: mockReplyRepository,
+      likeRepository: mockLikeRepository,
+    });
+
+    // Action
+    const thread = await getThreadUseCase.execute(useCasePayload);
+
+    // Assert
+    expect(thread.comments[0].likeCount).toEqual(5);
   });
 });

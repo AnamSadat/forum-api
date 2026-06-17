@@ -8,6 +8,7 @@ import threads from '../../Interfaces/http/api/threads/index.js';
 import authenticateToken from './middleware/authenticateToken.js';
 import comments from '../../Interfaces/http/api/comments/index.js';
 import replies from '../../Interfaces/http/api/replies/index.js';
+import likes from '../../Interfaces/http/api/likes/index.js';
 
 const createServer = async (container) => {
   const app = express();
@@ -39,6 +40,11 @@ const createServer = async (container) => {
     '/threads/:threadId/comments/:commentId/replies/:replyId',
     authenticateToken,
     replies(container),
+  );
+  app.use(
+    '/threads/:threadId/comments/:commentId/likes',
+    authenticateToken,
+    likes(container),
   );
 
   // Global error handler
@@ -85,8 +91,8 @@ const createServer = async (container) => {
 };
 
 const logError = (translatedError, error) => {
-  const statusCode = translatedError.statusCode || 500;
-  const errorType = error.name || 'UnknownError';
+  const statusCode = translatedError.statusCode;
+  const errorType = error.name;
 
   if (statusCode === 401) {
     // AuthenticationError

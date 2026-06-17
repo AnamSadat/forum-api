@@ -3,10 +3,16 @@ import ReplyDetails from '../../Domains/replies/entities/ReplyDetails.js';
 import ThreadDetails from '../../Domains/threads/entities/ThreadDetails.js';
 
 export default class GetThreadUseCase {
-  constructor({ threadRepository, commentRepository, replyRepository }) {
+  constructor({
+    threadRepository,
+    commentRepository,
+    replyRepository,
+    likeRepository,
+  }) {
     this._threadRepository = threadRepository;
     this._commentRepository = commentRepository;
     this._replyRepository = replyRepository;
+    this._likeRepository = likeRepository;
   }
 
   async execute(useCasePayload) {
@@ -17,6 +23,13 @@ export default class GetThreadUseCase {
     const comments =
       await this._commentRepository.getCommentByThreadId(useCasePayload);
 
+    const likes = await this._likeRepository.getLikesByThreadId(useCasePayload);
+
+    const likesMap = {};
+    likes.forEach((like) => {
+      likesMap[like.comment_id] = like.like_count;
+    });
+
     const commentsWithReplies = await Promise.all(
       comments.map(async (comment) => {
         const replies = await this._replyRepository.getReplyByCommentId(
@@ -25,7 +38,11 @@ export default class GetThreadUseCase {
         const formattedRepiles = replies.map(
           (reply) => new ReplyDetails(reply),
         );
-        return new CommentDetails({ ...comment, replies: formattedRepiles });
+        return new CommentDetails({
+          ...comment,
+          replies: formattedRepiles,
+          likeCount: likesMap[comment.id] || 0,
+        });
       }),
     );
 
