@@ -2,7 +2,7 @@ export default class CommentDetails {
   constructor(payload) {
     this._verifyPayload(payload);
 
-    const { id, content, date, username, replies } =
+    const { id, content, date, username, replies, likeCount } =
       this._formatPayload(payload);
 
     this.id = id;
@@ -10,6 +10,7 @@ export default class CommentDetails {
     this.date = date;
     this.username = username;
     this.replies = replies;
+    this.likeCount = likeCount;
   }
 
   _verifyPayload(payload) {
@@ -20,6 +21,7 @@ export default class CommentDetails {
       username,
       replies,
       is_deleted: isDeleted,
+      likeCount,
     } = payload;
 
     if (
@@ -28,7 +30,8 @@ export default class CommentDetails {
       !date ||
       !username ||
       !replies ||
-      isDeleted === undefined
+      isDeleted === undefined ||
+      likeCount === undefined
     )
       throw new Error('COMMENT_DETAILS.NOT_CONTAIN_NEEDED_PROPERTY');
 
@@ -41,7 +44,8 @@ export default class CommentDetails {
         Array.isArray(replies) &&
         replies.every((reply) => typeof reply === 'object' && reply !== null)
       ) ||
-      typeof isDeleted !== 'boolean'
+      typeof isDeleted !== 'boolean' ||
+      typeof likeCount !== 'number'
     )
       throw new Error('COMMENT_DETAILS.NOT_MEET_DATA_TYPE_SPECIFICATION');
   }
@@ -54,6 +58,7 @@ export default class CommentDetails {
       username,
       replies,
       is_deleted: isDeleted,
+      likeCount,
     } = payload;
 
     return {
@@ -62,6 +67,7 @@ export default class CommentDetails {
       date,
       replies,
       username,
+      likeCount,
     };
   }
 }
