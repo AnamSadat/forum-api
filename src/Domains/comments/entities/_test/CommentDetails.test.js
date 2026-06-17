@@ -22,6 +22,7 @@ describe('a CommentDetails entities', () => {
       content: true,
       replies: 'array',
       is_deleted: 'no',
+      likeCount: 0,
     };
 
     // Action and Assert
@@ -39,6 +40,7 @@ describe('a CommentDetails entities', () => {
       content: 'isi',
       replies: [{ content: 'something' }],
       is_deleted: false,
+      likeCount: 0,
     };
 
     const payload2 = {
@@ -48,6 +50,7 @@ describe('a CommentDetails entities', () => {
       content: 'isi 2',
       replies: [{ content: 'something2' }],
       is_deleted: true,
+      likeCount: 2,
     };
 
     // Action
