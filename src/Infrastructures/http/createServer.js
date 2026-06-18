@@ -47,6 +47,10 @@ const createServer = async (container) => {
     likes(container),
   );
 
+  app.get('/', (req, res) => {
+    res.json({ status: 'success' });
+  });
+
   // Global error handler
   // eslint-disable-next-line no-unused-vars
   app.use((error, req, res, next) => {
