@@ -1,0 +1,56 @@
+name: forum-api-v2
+services:
+  forum-api:
+    build: .
+    env_file: .env
+    networks:
+      - main-network
+      - internal-network
+    ports:
+      - '3000:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+        restart: true
+    restart: unless-stopped
+    command: >
+      sh -c "npm run migrate:prod up
+      && npm run start"
+
+  postgres:
+    image: postgres:16.4
+    env_file: .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - internal-network
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      # - '443:443'
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      # - ./certbot/conf:/etc/letsencrypt
+      # - ./certbot/www:/var/www/certbot
+    networks:
+      - main-network
+    depends_on:
+      - forum-api
+
+volumes:
+  pgdata:
+
+networks:
+  main-network:
+    external: true
+  internal-network:

@@ -1,0 +1,13 @@
+node_modules/
+*.log
+*_test/
+tests
+.vscode/
+.kiro/
+postman/
+trigger/
+coverage/
+.github/
+.git/
+Dockerfile
+docker-compose.yml
