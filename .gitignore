@@ -7,3 +7,6 @@ docs/
 note.txt
 naskah_wawancara.txt
 forum-api.zip
+
+# SSL Certificates
+certbot/
