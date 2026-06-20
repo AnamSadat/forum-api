@@ -1,0 +1,76 @@
+services:
+  devcontainer:
+    image: node:22-bookworm
+    working_dir: /workspaces/forum-api
+    env_file: ../.env
+    volumes:
+      - ..:/workspaces/forum-api:cached
+      - /workspaces/forum-api/node_modules
+    # command: npm run start
+    command: /bin/sh -c "while sleep 1000; do :; done"
+    ports:
+      - '3000:3000'
+    networks:
+      - forum-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # # INI PENGGANTI FILE .ENV KAMU UNTUK NODE.JS
+    # environment:
+    #   - HOST=0.0.0.0
+    #   - PORT=3000
+    #   # POSTGRES CLIENT (Koneksi ke db utama)
+    #   - PGHOST=postgres
+    #   - PGUSER=postgres
+    #   - PGDATABASE=forumapi
+    #   - PGPASSWORD=lumiere2327
+    #   - PGPORT=5432
+    #   # POSTGRES TEST CLIENT (Koneksi ke db test)
+    #   - PGHOST_TEST=postgres-test
+    #   - PGUSER_TEST=postgres
+    #   - PGDATABASE_TEST=forumapi_test
+    #   - PGPASSWORD_TEST=lumiere2327
+    #   - PGPORT_TEST=5432
+    #   # TOKENIZE
+    #   - ACCESS_TOKEN_KEY=8b7b4ef375716ab08b2a3951b29d52fc00b1c855f9d1a847229b8c5935bef56d9d271e76a9cf08e614300395c3b90ebe559cf968a0741b18c9505549394b2c70
+    #   - REFRESH_TOKEN_KEY=5078605e074a462b1460608fcbe0d0963c644402e04ad334455ff5a856cb43fd99825861dde02957d5e3184c90c532ca7d0249df20fe93d535632f3d11be7bad
+    #   - ACCCESS_TOKEN_AGE=3000
+
+  postgres:
+    image: postgres:16.4
+    restart: unless-stopped
+    # INI PENGGANTI .ENV UNTUK SETUP DOCKER POSTGRES UTAMA
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=lumiere2327
+      - POSTGRES_DB=forumapi
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - '5433:5432'
+    networks:
+      - forum-network
+
+  postgres-test:
+    image: postgres:16.4
+    restart: unless-stopped
+    # INI PENGGANTI .ENV UNTUK SETUP DOCKER POSTGRES TEST
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=lumiere2327
+      - POSTGRES_DB=forumapi_test
+    ports:
+      - '5434:5432'
+    networks:
+      - forum-network
+
+volumes:
+  pgdata:
+
+networks:
+  forum-network:

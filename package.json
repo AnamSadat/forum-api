@@ -1,9 +1,9 @@
 {
   "name": "forum-api",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "type": "module",
-  "main": "index.js",
+  "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
     "start:dev": "nodemon src/app.js",
@@ -11,11 +11,12 @@
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
     "migrate": "node-pg-migrate",
+    "migrate:prod": "npx node-pg-migrate",
     "migrate:test": "node-pg-migrate --envPath .test.env",
     "lint": "eslint ./"
   },
   "keywords": [],
-  "author": "",
+  "author": "Anam Sadat",
   "license": "ISC",
   "dependencies": {
     "auto-bind": "^5.0.1",

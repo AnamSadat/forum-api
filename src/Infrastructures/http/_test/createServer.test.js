@@ -5,6 +5,7 @@ import AuthenticationsTableTestHelper from '../../../../tests/AuthenticationsTab
 import container from '../../container.js';
 import createServer from '../createServer.js';
 import AuthenticationTokenManager from '../../../Applications/security/AuthenticationTokenManager.js';
+import { describe, expect, it } from 'vitest';
 
 describe('HTTP server', () => {
   afterAll(async () => {
@@ -25,6 +26,20 @@ describe('HTTP server', () => {
 
     // Assert
     expect(response.status).toEqual(404);
+  });
+
+  describe('when GET /', () => {
+    it('should response 200', async () => {
+      const app = await createServer(container);
+
+      const response = await request(app).get('/');
+
+      expect(response.status).toEqual(200);
+      expect(response.body.status).toEqual('success');
+      expect(response.body.message).toEqual(
+        'Forum API is running successfully',
+      );
+    });
   });
 
   describe('when POST /users', () => {

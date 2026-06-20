@@ -47,6 +47,13 @@ const createServer = async (container) => {
     likes(container),
   );
 
+  app.get('/', (req, res) => {
+    res.json({
+      status: 'success',
+      message: 'Forum API is running successfully',
+    });
+  });
+
   // Global error handler
   // eslint-disable-next-line no-unused-vars
   app.use((error, req, res, next) => {
