@@ -20,5 +20,4 @@ jobs:
           script: |
             cd ${{ secrets.DIRECTORY_PATH }}
             git pull origin main
-            docker compose down
             docker compose up -d --build
