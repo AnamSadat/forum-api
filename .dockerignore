@@ -11,3 +11,4 @@ coverage/
 .git/
 Dockerfile
 docker-compose.yml
+certbot/
