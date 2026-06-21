@@ -50,7 +50,7 @@ const createServer = async (container) => {
   app.get('/', (req, res) => {
     res.json({
       status: 'success',
-      message: 'Forum API is running successfully!!!',
+      message: 'Forum API is running successfully',
     });
   });
 
